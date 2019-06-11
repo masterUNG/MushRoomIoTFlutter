@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "93501177809",
+    "firebase_url": "https://mushroomiot-3e95d.firebaseio.com",
+    "project_id": "mushroomiot-3e95d",
+    "storage_bucket": "mushroomiot-3e95d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93501177809:android:23fac19c2be66c39",
+        "android_client_info": {
+          "package_name": "th.ac.rmutsv.rattaphumv.mushroom_iot_rpc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93501177809-o3f7nvgr8lgkc1a8p2l796ai5d6e1fgp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "th.ac.rmutsv.rattaphumv.mushroom_iot_rpc",
+            "certificate_hash": "d526c7f216189df4c3fbc44f59e6b0beb74db29f"
+          }
+        },
+        {
+          "client_id": "93501177809-mn9gri5g8nb5sp4tn34pfgtgl5puphnt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-upVScly3QER_w95h0f3HOr_1UcMzoLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "93501177809-mn9gri5g8nb5sp4tn34pfgtgl5puphnt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
