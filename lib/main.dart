@@ -10,7 +10,7 @@ class MyAppd extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Register(), //home screen
+      home: Authen(), //home screen
     );
   }
 }
