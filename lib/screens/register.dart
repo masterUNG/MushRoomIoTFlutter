@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 
 class Register extends StatefulWidget {
   @override
@@ -32,16 +34,23 @@ class _RegisterState extends State<Register> {
     print(
         'Name = $nameString,email = $emailString, pass = $passwordString, phone = $phoneString');
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    await firebaseAuth
+    await firebaseAuth //waitting for push data to firebase
         .createUserWithEmailAndPassword(
             email: emailString, password: passwordString)
         .then((objValue) {
       String uidString = objValue.uid.toString();
       print('uid ==> $uidString');
+      uploadValueToDatabase(uidString)
     }).catchError((objValue) {
       String error = objValue.message; //show error
       print('error ==> $error');
     });
+  }
+
+  void uploadValueToDatabase(String uid)async{
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+    
+
   }
 
   Widget nameText() {
