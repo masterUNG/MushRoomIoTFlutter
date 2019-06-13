@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mushroom_iot_rpc/screens/my_service.dart';
 import 'package:mushroom_iot_rpc/screens/register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Authen extends StatefulWidget {
   @override
@@ -10,8 +12,51 @@ class _AuthenState extends State<Authen> {
   //Explcit
   double amount = 180.0;
   double size = 250.0;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance; //object
+  final formKey = GlobalKey<FormState>(); //store email and password
+  final scaffoldKey = GlobalKey<ScaffoldState>(); //store stateful all screen
+  String emailString, passwordString;
 
   //Method
+  void showSnackBar(String messageString) {
+    //show data when error
+    SnackBar snackBar = SnackBar(
+      content: Text(messageString),
+      duration: Duration(seconds: 7), //adjust time to show
+      backgroundColor: Colors.orange[500], //bg color
+      action: SnackBarAction(
+        label: 'Close',textColor: Colors.blue[400],
+        onPressed: () {},
+      ), 
+    );
+    scaffoldKey.currentState.showSnackBar(snackBar); //show error snackbar
+  }
+
+  //this method doing first
+  @override
+  void initState() {
+    super.initState();
+    // checkStatus(context);
+  }
+
+  void checkStatus(BuildContext context) async {
+    FirebaseUser firebaseUser =
+        await firebaseAuth.currentUser(); //Stay login firebase have value
+    print('User=');
+    print(firebaseUser.toString());
+    if (firebaseUser != null) {
+      //  Move to MyService
+      moveToMyService(context);
+    }
+  }
+
+  void moveToMyService(BuildContext context) {
+    var myServiceRoute =
+        MaterialPageRoute(builder: (BuildContext context) => MyService());
+    Navigator.of(context)
+        .pushAndRemoveUntil(myServiceRoute, (Route<dynamic> route) => false);
+  }
+
   Widget mySizeBox() {
     return SizedBox(
       width: 10.0,
@@ -19,7 +64,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Widget signInButton() {
+  Widget signInButton(BuildContext context) {
     return Expanded(
       child: FlatButton(
         shape: RoundedRectangleBorder(
@@ -30,9 +75,29 @@ class _AuthenState extends State<Authen> {
           'Sign In',
           style: TextStyle(color: Colors.white),
         ),
-        onPressed: () {},
+        onPressed: () {
+          if (formKey.currentState.validate()) {
+            //if validate true
+            formKey.currentState.save(); //doing all onsave
+            checkAuthen(context);
+          }
+        },
       ),
     );
+  }
+
+  void checkAuthen(BuildContext context) async {
+    await firebaseAuth
+        .signInWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((objValue) {
+          moveToMyService(context);
+        })
+        .catchError((objValue) {
+      String error = objValue.message;
+      print('error => $error');
+      showSnackBar(error);
+    });
   }
 
   Widget signUpButton(BuildContext context) {
@@ -64,12 +129,31 @@ class _AuthenState extends State<Authen> {
         width: size,
         child: TextFormField(
           decoration: InputDecoration(
-              labelText: 'Email: ',
-              hintText: 'you@email.com',
-              labelStyle: TextStyle(color: Colors.orange[500])),
+            labelText: 'Email: ',
+            hintText: 'you@email.com',
+            labelStyle: TextStyle(color: Colors.orange[500]),
+          ),
+          validator: (String value) {
+            if (checkSpace(value)) {
+              return 'Please Type Email';
+            }
+          },
+          onSaved: (String value) {
+            emailString = value;
+          },
         ),
       ),
     );
+  }
+
+  bool checkSpace(String value) {
+    //check space input from email and password
+    bool result = false;
+    if (value.length == 0) {
+      // Have space
+      result = true;
+    }
+    return result;
   }
 
   Widget passwordTextFormField() {
@@ -78,10 +162,20 @@ class _AuthenState extends State<Authen> {
       child: Container(
         width: size,
         child: TextFormField(
+          obscureText: true,
           decoration: InputDecoration(
-              labelText: 'Password: ',
-              hintText: 'More 6 Charactor',
-              labelStyle: TextStyle(color: Colors.orange[500])),
+            labelText: 'Password: ',
+            hintText: 'More 6 Charactor',
+            labelStyle: TextStyle(color: Colors.orange[500]),
+          ),
+          validator: (String value) {
+            if (checkSpace(value)) {
+              return 'Password Emty';
+            }
+          },
+          onSaved: (String value) {
+            passwordString = value;
+          },
         ),
       ),
     );
@@ -111,6 +205,7 @@ class _AuthenState extends State<Authen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey, //watch all screen
       resizeToAvoidBottomPadding: false,
       body: Container(
         decoration: BoxDecoration(
@@ -124,30 +219,33 @@ class _AuthenState extends State<Authen> {
         ),
         padding: EdgeInsets.only(top: 20.0),
         alignment: Alignment(0, -1),
-        child: Column(
-          children: <Widget>[
-            showLogo(),
-            mySizeBox(),
-            showName(),
-            mySizeBox(),
-            emailTextFormField(),
-            mySizeBox(),
-            passwordTextFormField(),
-            Container(
-              margin: EdgeInsets.only(top: 15.0),
-              alignment: Alignment.center,
-              child: Container(
-                width: size,
-                child: Row(
-                  children: <Widget>[
-                    signInButton(),
-                    mySizeBox(),
-                    signUpButton(context),
-                  ],
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: <Widget>[
+              showLogo(),
+              mySizeBox(),
+              showName(),
+              mySizeBox(),
+              emailTextFormField(),
+              mySizeBox(),
+              passwordTextFormField(),
+              Container(
+                margin: EdgeInsets.only(top: 15.0),
+                alignment: Alignment.center,
+                child: Container(
+                  width: size,
+                  child: Row(
+                    children: <Widget>[
+                      signInButton(context),
+                      mySizeBox(),
+                      signUpButton(context),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
