@@ -89,6 +89,108 @@ class _MyServiceState extends State<MyService> {
     // Exit App
   }
 
+  Widget temHeight() {
+    return Expanded(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: 'Temp Height:',
+          helperText: 'องศา C',
+        ),
+      ),
+    );
+  }
+
+  Widget temLow() {
+    return Expanded(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: 'Temp Low:',
+          helperText: 'องศา C',
+        ),
+      ),
+    );
+  }
+
+  Widget humidityHeight() {
+    return Expanded(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: 'Humidity Height:',
+          helperText: '% ความชื้น',
+        ),
+      ),
+    );
+  }
+
+  Widget humidityLow() {
+    return Expanded(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: 'Humidity Low:',
+          helperText: '% ความชื้น',
+        ),
+      ),
+    );
+  }
+
+  Widget suitableHumidity() {
+    return Expanded(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: 'Suitable Humidity:',
+          helperText: '% ความชื้น',
+        ),
+      ),
+    );
+  }
+
+  Widget suitableTem() {
+    return Expanded(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: 'Suitable Tem:',
+          helperText: 'อวศา C',
+        ),
+      ),
+    );
+  }
+
+  Widget row1() {
+    return Container(
+      alignment: Alignment.topCenter,
+      child: Container(
+        width: 300.0,
+        child: Row(
+          children: <Widget>[temLow(), temHeight()],
+        ),
+      ),
+    );
+  }
+
+  Widget row2() {
+    return Container(
+      alignment: Alignment.topCenter,
+      child: Container(
+        width: 300.0,
+        child: Row(
+          children: <Widget>[humidityLow(), humidityHeight()],
+        ),
+      ),
+    );
+  }
+
+  Widget row3() {
+    return Container(
+      alignment: Alignment.topCenter,
+      child: Container(
+        width: 300.0,
+        child: Row(
+          children: <Widget>[suitableHumidity(), suitableTem()],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +198,13 @@ class _MyServiceState extends State<MyService> {
         title: showTitle(),
         actions: <Widget>[signOutButton()],
       ),
-      body: Text('body'),
+      body: Container(
+        alignment: Alignment.topCenter,
+        padding: EdgeInsets.only(top: 80.0),
+        child: Column(
+          children: <Widget>[row1(), row2(), row3()],
+        ),
+      ),
     );
   }
 }
