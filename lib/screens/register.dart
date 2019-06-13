@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-
+import 'package:mushroom_iot_rpc/screens/my_service.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _RegisterState extends State<Register> {
   String nameString, emailString, passwordString, phoneString;
 
   // Method
-  Widget uploadButton() {
+  Widget uploadButton(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.cloud_upload),
       iconSize: 36.0,
@@ -23,13 +23,13 @@ class _RegisterState extends State<Register> {
         print('You Click Upload');
         if (formKey.currentState.validate()) {
           formKey.currentState.save(); //save data from form to variable
-          uploadToFirebase();
+          uploadToFirebase(context);
         }
       },
     );
   }
 
-  void uploadToFirebase() async {
+  void uploadToFirebase(BuildContext context) async {
     //async is a thread
     print(
         'Name = $nameString,email = $emailString, pass = $passwordString, phone = $phoneString');
@@ -40,17 +40,39 @@ class _RegisterState extends State<Register> {
         .then((objValue) {
       String uidString = objValue.uid.toString();
       print('uid ==> $uidString');
-      uploadValueToDatabase(uidString)
+      uploadValueToDatabase(uidString, context);
     }).catchError((objValue) {
       String error = objValue.message; //show error
       print('error ==> $error');
     });
   }
 
-  void uploadValueToDatabase(String uid)async{
-    FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
-    
+  void uploadValueToDatabase(String uid, BuildContext context) async {
+    // build BuildContext to route to my service screen
+    Map<String, String> map = Map(); //key and value
+    map['Name'] = nameString; //put name from form to map
+    map['Phone'] = phoneString;
+    map['Uid'] = uid;
 
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+    await firebaseDatabase //wait for putting data to firebase success or false
+        .reference()
+        .child('User') //child from database
+        .child(uid) //child from database Uid
+        .set(map)
+        .then((objValue) {
+      //obj value
+      print('Update Database Success');
+
+      // Create Route to MyService
+      var myServiceRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          myServiceRoute, ((Route<dynamic> route) => false)); //route to myservice don't have back button
+    }).catchError((objValue) {
+      String error = objValue.message;
+      print('error ==> $error');
+    });
   }
 
   Widget nameText() {
@@ -160,7 +182,7 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         backgroundColor: Colors.orange[500],
         title: Text('Register'),
-        actions: <Widget>[uploadButton()],
+        actions: <Widget>[uploadButton(context)],
       ),
       body: Form(
         key: formKey,
