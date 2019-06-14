@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:io';
+import 'package:mushroom_iot_rpc/screens/show_service.dart';
 
 class MyService extends StatefulWidget {
   @override
@@ -12,7 +13,9 @@ class _MyServiceState extends State<MyService> {
   // Explicit
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+  final formKey = GlobalKey<FormState>();
   String nameLogin = "", uidString, phone;
+  int tempLow, tempHight, humiLow, humiHight, suitHumi, suitTem;
 
   // Method
   @override
@@ -89,6 +92,14 @@ class _MyServiceState extends State<MyService> {
     // Exit App
   }
 
+  bool checkSpace(String value) {
+    bool result = false;
+    if (value.length == 0) {
+      result = true;
+    }
+    return result;
+  }
+
   Widget temHeight() {
     return Expanded(
       child: TextFormField(
@@ -96,6 +107,15 @@ class _MyServiceState extends State<MyService> {
           labelText: 'Temp Height:',
           helperText: 'องศา C',
         ),
+        validator: (String value) {
+          if (checkSpace(value)) {
+            return 'Have Space';
+          }
+        },
+        onSaved: (String value) {
+          int valueInt = int.parse(value);
+          tempHight = valueInt;
+        },
       ),
     );
   }
@@ -104,9 +124,21 @@ class _MyServiceState extends State<MyService> {
     return Expanded(
       child: TextFormField(
         decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1.0, color: Colors.orange[500]),
+              borderRadius: BorderRadius.circular(25.0)),
           labelText: 'Temp Low:',
           helperText: 'องศา C',
         ),
+        validator: (String value) {
+          if (checkSpace(value)) {
+            return 'Have Space';
+          }
+        },
+        onSaved: (String value) {
+          int valueInt = int.parse(value);
+          tempLow = valueInt;
+        },
       ),
     );
   }
@@ -118,6 +150,15 @@ class _MyServiceState extends State<MyService> {
           labelText: 'Humidity Height:',
           helperText: '% ความชื้น',
         ),
+        validator: (String value) {
+          if (checkSpace(value)) {
+            return 'Have Space';
+          }
+        },
+        onSaved: (String value) {
+          int valueInt = int.parse(value);
+          humiHight = valueInt;
+        },
       ),
     );
   }
@@ -129,6 +170,15 @@ class _MyServiceState extends State<MyService> {
           labelText: 'Humidity Low:',
           helperText: '% ความชื้น',
         ),
+        validator: (String value) {
+          if (checkSpace(value)) {
+            return 'Have Space';
+          }
+        },
+        onSaved: (String value) {
+          int valueInt = int.parse(value);
+          humiLow = valueInt;
+        },
       ),
     );
   }
@@ -140,6 +190,15 @@ class _MyServiceState extends State<MyService> {
           labelText: 'Suitable Humidity:',
           helperText: '% ความชื้น',
         ),
+        validator: (String value) {
+          if (checkSpace(value)) {
+            return 'Have Space';
+          }
+        },
+        onSaved: (String value) {
+          int valueInt = int.parse(value);
+          suitHumi = valueInt;
+        },
       ),
     );
   }
@@ -151,6 +210,15 @@ class _MyServiceState extends State<MyService> {
           labelText: 'Suitable Tem:',
           helperText: 'อวศา C',
         ),
+        validator: (String value) {
+          if (checkSpace(value)) {
+            return 'Have Space';
+          }
+        },
+        onSaved: (String value) {
+          int valueInt = int.parse(value);
+          suitTem = valueInt;
+        },
       ),
     );
   }
@@ -191,18 +259,70 @@ class _MyServiceState extends State<MyService> {
     );
   }
 
+  Widget sentButton(BuildContext context) {
+    return Container(
+      alignment: Alignment.topCenter,
+      child: RaisedButton(
+        child: Text('Sent Data'),
+        onPressed: () {
+          print('You Click Sent Button');
+          if (formKey.currentState.validate()) {
+            formKey.currentState.save();
+            uploadToFirebase(context);
+          }
+        },
+      ),
+    );
+  }
+
+  void uploadToFirebase(BuildContext context) async {
+    print(
+        'TemLow= $tempLow, TemHight = $tempHight, HumLow = $humiLow, HumHight=$humiHight, SuitTem = $suitTem, SuitHum=$suitHumi');
+    DatabaseReference databaseReference =
+        firebaseDatabase.reference().child('IoT');
+    await databaseReference.once().then((DataSnapshot dataSnapshot) {
+      Map<dynamic, dynamic> map = dataSnapshot.value;
+      print('map = $map');
+
+      map['Temp_Low'] = tempLow;
+      map['Temp_High'] = tempHight;
+      map['Humidity_Low'] = humiLow;
+      map['Humidity_High'] = humiHight;
+      map['Suitable Humi'] = suitHumi;
+      map['Suitable Tem'] = suitTem;
+
+      print('map current = $map');
+      sentDataToFirebase(map,context);
+    });
+  }
+
+  void sentDataToFirebase(Map map, BuildContext context) async {
+    await firebaseDatabase.reference().child('IoT').set(map).then((objValue) {
+      print('Success');
+      var showServiceRoute =
+          MaterialPageRoute(builder: (BuildContext context) => ShowServic());
+          Navigator.of(context).push(showServiceRoute);
+    }).catchError((objValue) {
+      String errorString = objValue.message;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: showTitle(),
         actions: <Widget>[signOutButton()],
       ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        padding: EdgeInsets.only(top: 80.0),
-        child: Column(
-          children: <Widget>[row1(), row2(), row3()],
+      body: Form(
+        key: formKey,
+        child: Container(
+          alignment: Alignment.topCenter,
+          padding: EdgeInsets.only(top: 80.0),
+          child: Column(
+            children: <Widget>[row1(), row2(), row3(), sentButton(context)],
+          ),
         ),
       ),
     );
