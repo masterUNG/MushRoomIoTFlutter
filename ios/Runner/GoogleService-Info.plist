@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>93501177809-61rom27sj35ms08g3l1ier1nq7msk6n3.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.93501177809-61rom27sj35ms08g3l1ier1nq7msk6n3</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>93501177809-o3f7nvgr8lgkc1a8p2l796ai5d6e1fgp.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCeZTtYE6Mo01y0MYNlFqG7LTjfJ7OHR54</string>
+	<key>GCM_SENDER_ID</key>
+	<string>93501177809</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>th.ac.rmutsv.rattaphumv.mushroomIotRpc</string>
+	<key>PROJECT_ID</key>
+	<string>mushroomiot-3e95d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mushroomiot-3e95d.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:93501177809:ios:f16281064c252eb4</string>
+	<key>DATABASE_URL</key>
+	<string>https://mushroomiot-3e95d.firebaseio.com</string>
+</dict>
+</plist>
