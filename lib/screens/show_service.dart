@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ShowServic extends StatefulWidget {
   @override
@@ -16,12 +18,15 @@ class _ShowServicState extends State<ShowServic> {
   FirebaseDatabase firebaseDatabaseHumiTemp = FirebaseDatabase.instance;
   Map<dynamic, dynamic> map;
   Map<dynamic, dynamic> mapCu;
+   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+   String nameLogin = "", uidString, phone;
 
   @override
   void initState() {
     super.initState();
     getValueFromFirebase();
     getCurrentHumiTempValue();
+    findUidLogin();
   }
 
   void getValueFromFirebase() async {
@@ -76,7 +81,13 @@ class _ShowServicState extends State<ShowServic> {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        child: Text('Current Temp: $cuTemp C   '),
+        child: Text(
+          'Current Temp: $cuTemp C   ',
+          style: TextStyle(
+            color: Colors.orange[500],
+            fontSize: 20.0,
+          ),
+        ),
       ),
     );
   }
@@ -85,7 +96,13 @@ class _ShowServicState extends State<ShowServic> {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        child: Text('Current Humidity: $cuHumi %'),
+        child: Text(
+          'Current Humidity: $cuHumi %',
+          style: TextStyle(
+            color: Colors.green[300],
+            fontSize: 20.0,
+          ),
+        ),
       ),
     );
   }
@@ -94,8 +111,16 @@ class _ShowServicState extends State<ShowServic> {
     return Expanded(
       child: Column(
         children: <Widget>[
-          Text('$textInt'),
+          Text(
+            '$textInt',
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.blue[700],
+            ),
+          ),
           RaisedButton(
+            color: Colors.blue[700],
+            textColor: Colors.white,
             child: Text(labelString),
             onPressed: () {
               int valueInt = 0;
@@ -133,18 +158,74 @@ class _ShowServicState extends State<ShowServic> {
     );
   }
 
+  void findUidLogin() async {
+    await firebaseAuth.currentUser().then((objValue) {
+      uidString = objValue.uid.toString().trim();
+      print('uidString ==> $uidString');
+      findNameLogin();
+    });
+  }
+
+  void findNameLogin() async {
+    await firebaseDatabase
+        .reference()
+        .child('User')
+        .child(uidString)
+        .once()
+        .then((DataSnapshot dataSnapshop) {
+      String response =
+          dataSnapshop.value.toString(); //get all data from firebase
+      print('Respose = $response');
+
+      Map<dynamic, dynamic> map = dataSnapshop.value; //get a data
+      setState(() {
+        nameLogin = map['Name']; // get name
+      });
+      phone = map['Phone'];
+      print('Namelogin = $nameLogin');
+      print('Phone = $phone');
+    });
+  }
+
+
+  Widget signOutButton() {
+    //sign out buttom
+    return IconButton(
+      icon: Icon(Icons.exit_to_app),
+      tooltip: 'Sign Out',
+      onPressed: () {
+        signOut();
+      },
+    );
+  }
+
+  void signOut() async {
+    await firebaseAuth.signOut().then((objValue) {
+      print('Exit');
+      exit(0);
+    }); //signOut from firebase
+    // Exit App
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Show Environment'),
+        actions: <Widget>[
+          signOutButton(),
+        ],
       ),
       body: Container(
         alignment: Alignment.topCenter,
         child: ListView(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(left: 70.0, top: 15.0,bottom: 15),
+              padding: EdgeInsets.only(
+                left: 10.0,
+                top: 15.0,
+                bottom: 15,
+              ),
               child: Row(
                 children: <Widget>[
                   showCuTemp(),
