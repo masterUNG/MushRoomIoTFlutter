@@ -68,7 +68,9 @@ class _RegisterState extends State<Register> {
       var myServiceRoute =
           MaterialPageRoute(builder: (BuildContext context) => MyService());
       Navigator.of(context).pushAndRemoveUntil(
-          myServiceRoute, ((Route<dynamic> route) => false)); //route to myservice don't have back button
+          myServiceRoute,
+          ((Route<dynamic> route) =>
+              false)); //route to myservice don't have back button
     }).catchError((objValue) {
       String error = objValue.message;
       print('error ==> $error');
@@ -178,26 +180,36 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        backgroundColor: Colors.orange[500],
-        title: Text('Register'),
-        actions: <Widget>[uploadButton(context)],
-      ),
-      body: Form(
-        key: formKey,
-        child: Container(
-          padding: EdgeInsets.only(top: 80.0, left: 50.0, right: 50.0),
-          child: ListView(
-            children: <Widget>[
-              nameText(),
-              nameEmail(),
-              namePassword(),
-              namePhone()
-            ],
-          ),
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          backgroundColor: Colors.orange[500],
+          title: Text('Register'),
+          actions: <Widget>[uploadButton(context)],
         ),
-      ),
-    );
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+                center: Alignment(0, 0),
+                colors: [
+                  Colors.white,
+                  Colors.green[300],
+                ],
+                radius: 1.5),
+          ),
+          child: Form(
+            key: formKey,
+            child: Container(
+              padding: EdgeInsets.only(top: 80.0, left: 50.0, right: 50.0),
+              child: ListView(
+                children: <Widget>[
+                  nameText(),
+                  nameEmail(),
+                  namePassword(),
+                  namePhone()
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }

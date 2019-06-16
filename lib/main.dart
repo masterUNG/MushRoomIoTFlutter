@@ -16,7 +16,7 @@ class MyAppd extends StatelessWidget {
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);//adjust screen portal
     return MaterialApp(
       debugShowCheckedModeBanner: false, //don't show debug on screen
-      home: MyService(), //home screen
+      home: Authen(), //home screen
     );
   }
 }
