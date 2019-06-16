@@ -12,14 +12,20 @@ class ShowServic extends StatefulWidget {
 class _ShowServicState extends State<ShowServic> {
   // Explicit
   String url1 =
-      'https://thingspeak.com/channels/437885/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15';
+          'https://thingspeak.com/channels/437885/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line',
+      url2 =
+          'https://thingspeak.com/channels/662286/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15',
+      url3 =
+          'https://thingspeak.com/channels/437885/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line',
+      url4 =
+          'https://thingspeak.com/channels/662286/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15';
   int fogInt, fanInt, lightInt, cuTemp, cuHumi;
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
   FirebaseDatabase firebaseDatabaseHumiTemp = FirebaseDatabase.instance;
   Map<dynamic, dynamic> map;
   Map<dynamic, dynamic> mapCu;
-   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-   String nameLogin = "", uidString, phone;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  String nameLogin = "", uidString, phone;
 
   @override
   void initState() {
@@ -99,7 +105,7 @@ class _ShowServicState extends State<ShowServic> {
         child: Text(
           'Current Humidity: $cuHumi %',
           style: TextStyle(
-            color: Colors.green[300],
+            color: Colors.blue[700],
             fontSize: 20.0,
           ),
         ),
@@ -152,7 +158,7 @@ class _ShowServicState extends State<ShowServic> {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        height: 150.0,
+        height: 200.0,
         child: showGraph(urlString),
       ),
     );
@@ -187,7 +193,6 @@ class _ShowServicState extends State<ShowServic> {
     });
   }
 
-
   Widget signOutButton() {
     //sign out buttom
     return IconButton(
@@ -207,6 +212,13 @@ class _ShowServicState extends State<ShowServic> {
     // Exit App
   }
 
+  Widget mySizeBox() {
+    return SizedBox(
+      width: 10.0,
+      height: 10.0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,6 +229,15 @@ class _ShowServicState extends State<ShowServic> {
         ],
       ),
       body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+              center: Alignment(0, -1),
+              colors: [
+                Colors.white,
+                Colors.green[300],
+              ],
+              radius: 1.5),
+        ),
         alignment: Alignment.topCenter,
         child: ListView(
           children: <Widget>[
@@ -239,14 +260,18 @@ class _ShowServicState extends State<ShowServic> {
                 children: <Widget>[
                   showPanal('Fog', fogInt),
                   showPanal('Fan', fanInt),
-                  showPanal('Light', lightInt)
+                  showPanal('Light', lightInt),
+                  mySizeBox(),
                 ],
               ),
             ),
             showThinkSpeak(url1),
-            showThinkSpeak(url1),
-            showThinkSpeak(url1),
-            showThinkSpeak(url1)
+            mySizeBox(),
+            showThinkSpeak(url2),
+            mySizeBox(),
+            showThinkSpeak(url3),
+            mySizeBox(),
+            showThinkSpeak(url4)
           ],
         ),
       ),

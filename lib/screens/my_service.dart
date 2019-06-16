@@ -59,12 +59,12 @@ class _MyServiceState extends State<MyService> {
         children: <Widget>[
           Container(
             alignment: Alignment.center,
-            child: Text('My Service'),
+            child: Text('Environment Setting'),
           ),
           Container(
             alignment: Alignment.topLeft,
             child: Text(
-              'User:$nameLogin ',
+              '$nameLogin ',
               style: TextStyle(fontSize: 15.0),
             ),
           ),
@@ -104,6 +104,12 @@ class _MyServiceState extends State<MyService> {
     return Expanded(
       child: TextFormField(
         decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 1.0,
+                color: Colors.blue[700],
+              ),
+              borderRadius: BorderRadius.circular(25.0)),
           labelText: 'Temp Height:',
           helperText: 'องศา C',
         ),
@@ -125,7 +131,10 @@ class _MyServiceState extends State<MyService> {
       child: TextFormField(
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 1.0, color: Colors.orange[500]),
+              borderSide: BorderSide(
+                width: 1.0,
+                color: Colors.green[500],
+              ),
               borderRadius: BorderRadius.circular(25.0)),
           labelText: 'Temp Low:',
           helperText: 'องศา C',
@@ -147,6 +156,12 @@ class _MyServiceState extends State<MyService> {
     return Expanded(
       child: TextFormField(
         decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 1.0,
+                color: Colors.orange[500],
+              ),
+              borderRadius: BorderRadius.circular(25.0)),
           labelText: 'Humidity Height:',
           helperText: '% ความชื้น',
         ),
@@ -167,6 +182,9 @@ class _MyServiceState extends State<MyService> {
     return Expanded(
       child: TextFormField(
         decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1.0, color: Colors.yellow[600]),
+              borderRadius: BorderRadius.circular(25.0)),
           labelText: 'Humidity Low:',
           helperText: '% ความชื้น',
         ),
@@ -187,6 +205,9 @@ class _MyServiceState extends State<MyService> {
     return Expanded(
       child: TextFormField(
         decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1.0, color: Colors.red[500]),
+              borderRadius: BorderRadius.circular(25.0)),
           labelText: 'Suitable Humidity:',
           helperText: '% ความชื้น',
         ),
@@ -207,6 +228,9 @@ class _MyServiceState extends State<MyService> {
     return Expanded(
       child: TextFormField(
         decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1.0, color: Colors.purple[600]),
+              borderRadius: BorderRadius.circular(25.0)),
           labelText: 'Suitable Tem:',
           helperText: 'อวศา C',
         ),
@@ -223,13 +247,24 @@ class _MyServiceState extends State<MyService> {
     );
   }
 
+  Widget showText() {
+    return Container(
+      padding: EdgeInsets.only(bottom: 20.0),
+      alignment: Alignment.topCenter,
+      child: Text(
+        'Setting Data',
+        style: TextStyle(color: Colors.blue[600], fontSize: 25.0),
+      ),
+    );
+  }
+
   Widget row1() {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        width: 300.0,
+        width: 380.0,
         child: Row(
-          children: <Widget>[temLow(), temHeight()],
+          children: <Widget>[temLow(), mySizeBox(), temHeight()],
         ),
       ),
     );
@@ -239,9 +274,9 @@ class _MyServiceState extends State<MyService> {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        width: 300.0,
+        width: 380.0,
         child: Row(
-          children: <Widget>[humidityLow(), humidityHeight()],
+          children: <Widget>[humidityLow(), mySizeBox(), humidityHeight()],
         ),
       ),
     );
@@ -251,9 +286,9 @@ class _MyServiceState extends State<MyService> {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        width: 300.0,
+        width: 380.0,
         child: Row(
-          children: <Widget>[suitableHumidity(), suitableTem()],
+          children: <Widget>[suitableHumidity(), mySizeBox(), suitableTem()],
         ),
       ),
     );
@@ -261,9 +296,14 @@ class _MyServiceState extends State<MyService> {
 
   Widget sentButton(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(top: 20.0),
       alignment: Alignment.topCenter,
       child: RaisedButton(
-        child: Text('Sent Data'),
+        color: Colors.white,
+        child: Text(
+          'Sent Data',
+          style: TextStyle(color: Colors.blue[700]),
+        ),
         onPressed: () {
           print('You Click Sent Button');
           if (formKey.currentState.validate()) {
@@ -292,7 +332,7 @@ class _MyServiceState extends State<MyService> {
       map['Suitable Tem'] = suitTem;
 
       print('map current = $map');
-      sentDataToFirebase(map,context);
+      sentDataToFirebase(map, context);
     });
   }
 
@@ -301,30 +341,52 @@ class _MyServiceState extends State<MyService> {
       print('Success');
       var showServiceRoute =
           MaterialPageRoute(builder: (BuildContext context) => ShowServic());
-          Navigator.of(context).push(showServiceRoute);
+      Navigator.of(context).push(showServiceRoute);
     }).catchError((objValue) {
       String errorString = objValue.message;
     });
   }
 
+  Widget mySizeBox() {
+    return SizedBox(
+      width: 10.0,
+      height: 15.0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        title: showTitle(),
-        actions: <Widget>[signOutButton()],
-      ),
-      body: Form(
-        key: formKey,
-        child: Container(
-          alignment: Alignment.topCenter,
-          padding: EdgeInsets.only(top: 80.0),
-          child: Column(
-            children: <Widget>[row1(), row2(), row3(), sentButton(context)],
-          ),
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          title: showTitle(),
+          actions: <Widget>[signOutButton()],
         ),
-      ),
-    );
+        body: Container(decoration: BoxDecoration(
+          gradient: RadialGradient(
+              center: Alignment(0, -1),
+              colors: [
+                Colors.white,
+                Colors.blue[300],
+              ],
+              radius: 1.5),
+        ),
+          child: Form(
+            key: formKey,
+            child: Container(
+              alignment: Alignment.topCenter,
+              padding: EdgeInsets.only(top: 30.0),
+              child: Column(
+                children: <Widget>[
+                  showText(),
+                  row1(),
+                  row2(),
+                  row3(),
+                  sentButton(context)
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }
