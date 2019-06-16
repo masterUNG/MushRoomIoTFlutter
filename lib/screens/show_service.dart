@@ -11,14 +11,17 @@ class _ShowServicState extends State<ShowServic> {
   // Explicit
   String url1 =
       'https://thingspeak.com/channels/437885/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15';
-  int fogInt, fanInt, lightInt;
+  int fogInt, fanInt, lightInt, cuTemp, cuHumi;
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+  FirebaseDatabase firebaseDatabaseHumiTemp = FirebaseDatabase.instance;
   Map<dynamic, dynamic> map;
+  Map<dynamic, dynamic> mapCu;
 
   @override
   void initState() {
     super.initState();
     getValueFromFirebase();
+    getCurrentHumiTempValue();
   }
 
   void getValueFromFirebase() async {
@@ -30,6 +33,33 @@ class _ShowServicState extends State<ShowServic> {
         fanInt = map['Fan'];
         lightInt = map['Light'];
         print('fog = $fogInt, fan = $fanInt,light=$lightInt');
+      });
+    });
+  }
+
+  void editFirebase(String nodeString, int value) async {
+    print('node ==>$nodeString');
+    map['$nodeString'] = value;
+    await firebaseDatabase.reference().child('IoT').set(map).then((objValue) {
+      print('$nodeString Success');
+      getValueFromFirebase();
+    }).catchError((objValue) {
+      String error = objValue.message;
+      print('error ==>$error');
+    });
+  }
+
+  void getCurrentHumiTempValue() async {
+    DatabaseReference databaseReferenceHumiTemp = await firebaseDatabaseHumiTemp
+        .reference()
+        .child('Current')
+        .once()
+        .then((objValue) {
+      mapCu = objValue.value;
+      setState(() {
+        cuHumi = mapCu['Cu_Humi'];
+        cuTemp = mapCu['Cu_Temp'];
+        print('Cu Humi = $cuHumi,Cu Temp = $cuTemp');
       });
     });
   }
@@ -46,7 +76,7 @@ class _ShowServicState extends State<ShowServic> {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        child: Text('CuTemp'),
+        child: Text('Current Temp: $cuTemp C   '),
       ),
     );
   }
@@ -55,7 +85,7 @@ class _ShowServicState extends State<ShowServic> {
     return Container(
       alignment: Alignment.topCenter,
       child: Container(
-        child: Text('CuHumi'),
+        child: Text('Current Humidity: $cuHumi %'),
       ),
     );
   }
@@ -68,41 +98,29 @@ class _ShowServicState extends State<ShowServic> {
           RaisedButton(
             child: Text(labelString),
             onPressed: () {
-              int valueInt =0;
-              if (labelString=='Fog') {
-                valueInt = fogInt+1;
-                if (valueInt==2) {
-                  valueInt=0;
+              int valueInt = 0;
+              if (labelString == 'Fog') {
+                valueInt = fogInt + 1;
+                if (valueInt == 2) {
+                  valueInt = 0;
                 }
-              }else if(labelString=='Fan'){
-                  valueInt = fanInt+1;
-                if (valueInt==2) {
-                  valueInt=0;
+              } else if (labelString == 'Fan') {
+                valueInt = fanInt + 1;
+                if (valueInt == 2) {
+                  valueInt = 0;
                 }
-              }else{
-                valueInt = lightInt+1;
-                if (valueInt==2) {
-                  valueInt=0;
-              }
-              }
-              editFirebase(labelString,valueInt);
+              } else if (labelString == 'Light') {
+                valueInt = lightInt + 1;
+                if (valueInt == 2) {
+                  valueInt = 0;
+                }
+              } else {}
+              editFirebase(labelString, valueInt);
             },
           )
         ],
       ),
     );
-  }
-
-  void editFirebase(String nodeString, int value) async {
-    print('node ==>$nodeString');
-    map['$nodeString'] = value;
-    await firebaseDatabase.reference().child('IoT').set(map).then((objValue) {
-      print('$nodeString Success');
-      getValueFromFirebase();
-    }).catchError((objValue) {
-      String error = objValue.message;
-      print('error ==>$error');
-    });
   }
 
   Widget showThinkSpeak(String urlString) {
@@ -125,8 +143,15 @@ class _ShowServicState extends State<ShowServic> {
         alignment: Alignment.topCenter,
         child: ListView(
           children: <Widget>[
-            showCuTemp(),
-            showCuHumi(),
+            Container(
+              padding: EdgeInsets.only(left: 70.0, top: 15.0,bottom: 15),
+              child: Row(
+                children: <Widget>[
+                  showCuTemp(),
+                  showCuHumi(),
+                ],
+              ),
+            ),
             Container(
               width: 240.0,
               child: Row(
