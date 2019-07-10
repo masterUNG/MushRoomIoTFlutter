@@ -19,7 +19,8 @@ class _ShowServicState extends State<ShowServic> {
           'https://thingspeak.com/channels/437885/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line',
       url4 =
           'https://thingspeak.com/channels/662286/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15';
-  int fogInt, fanInt, lightInt, cuTemp, cuHumi;
+  int modeInt, fogInt, fanInt, lightInt;
+  double cuTemp, cuHumi;
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
   FirebaseDatabase firebaseDatabaseHumiTemp = FirebaseDatabase.instance;
   Map<dynamic, dynamic> map;
@@ -43,7 +44,8 @@ class _ShowServicState extends State<ShowServic> {
         fogInt = map['Fog'];
         fanInt = map['Fan'];
         lightInt = map['Light'];
-        print('fog = $fogInt, fan = $fanInt,light=$lightInt');
+        modeInt = map['Mode'];
+        print('fog = $fogInt, fan = $fanInt,light=$lightInt, mode = $modeInt');
       });
     });
   }
@@ -88,7 +90,7 @@ class _ShowServicState extends State<ShowServic> {
       alignment: Alignment.topCenter,
       child: Container(
         child: Text(
-          'Current Temp: $cuTemp C   ',
+          'C Temp: $cuTemp C   ',
           style: TextStyle(
             color: Colors.orange[500],
             fontSize: 20.0,
@@ -103,7 +105,7 @@ class _ShowServicState extends State<ShowServic> {
       alignment: Alignment.topCenter,
       child: Container(
         child: Text(
-          'Current Humidity: $cuHumi %',
+          'C Humidity: $cuHumi %',
           style: TextStyle(
             color: Colors.blue[700],
             fontSize: 20.0,
@@ -142,6 +144,11 @@ class _ShowServicState extends State<ShowServic> {
                 }
               } else if (labelString == 'Light') {
                 valueInt = lightInt + 1;
+                if (valueInt == 2) {
+                  valueInt = 0;
+                }
+              } else if (labelString == 'Mode') {
+                valueInt = modeInt + 1;
                 if (valueInt == 2) {
                   valueInt = 0;
                 }
@@ -219,6 +226,13 @@ class _ShowServicState extends State<ShowServic> {
     );
   }
 
+  Widget mySizeBoxSmall() {
+    return SizedBox(
+      width: 5.0,
+      height: 5.0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -255,13 +269,21 @@ class _ShowServicState extends State<ShowServic> {
               ),
             ),
             Container(
-              width: 240.0,
+              padding: EdgeInsets.only(
+                left: 10.0,
+                right: 10.0,
+                bottom: 5.0,
+              ),
+              width: 250.0,
               child: Row(
                 children: <Widget>[
-                  showPanal('Fog', fogInt),
-                  showPanal('Fan', fanInt),
-                  showPanal('Light', lightInt),
+                  showPanal('Mode', modeInt),
                   mySizeBox(),
+                  showPanal('Fog', fogInt),
+                  mySizeBox(),
+                  showPanal('Fan', fanInt),
+                  mySizeBox(),
+                  showPanal('Light', lightInt),
                 ],
               ),
             ),

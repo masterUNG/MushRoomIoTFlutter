@@ -165,7 +165,7 @@ class _AuthenState extends State<Authen> {
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'Password: ',
-            hintText: 'More 6 Charactor',
+            hintText: 'More 8 Charactor',
             labelStyle: TextStyle(color: Colors.orange[500]),
           ),
           validator: (String value) {
@@ -234,12 +234,12 @@ class _AuthenState extends State<Authen> {
                 margin: EdgeInsets.only(top: 15.0),
                 alignment: Alignment.center,
                 child: Container(
-                  width: size,
+                  width: 100,
                   child: Row(
                     children: <Widget>[
                       signInButton(context),
                       mySizeBox(),
-                      signUpButton(context),
+                      //signUpButton(context),
                     ],
                   ),
                 ),

@@ -328,8 +328,8 @@ class _MyServiceState extends State<MyService> {
       map['Temp_High'] = tempHight;
       map['Humidity_Low'] = humiLow;
       map['Humidity_High'] = humiHight;
-      map['Suitable Humi'] = suitHumi;
-      map['Suitable Tem'] = suitTem;
+      map['Suitable_Humi'] = suitHumi;
+      map['Suitable_Tem'] = suitTem;
 
       print('map current = $map');
       sentDataToFirebase(map, context);
