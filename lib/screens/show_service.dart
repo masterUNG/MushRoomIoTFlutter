@@ -3,6 +3,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class ShowServic extends StatefulWidget {
   @override
@@ -18,7 +19,9 @@ class _ShowServicState extends State<ShowServic> {
       url3 =
           'https://thingspeak.com/channels/437885/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line',
       url4 =
-          'https://thingspeak.com/channels/662286/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15';
+          'https://thingspeak.com/channels/662286/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15',
+      humiGageUrl = 'https://thingspeak.com/channels/662286/widgets/93495',
+      temGageUrl = 'https://thingspeak.com/channels/662286/widgets/93565';
   int modeInt, fogInt, fanInt, lightInt;
   double cuTemp, cuHumi;
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
@@ -236,67 +239,71 @@ class _ShowServicState extends State<ShowServic> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Show Environment'),
-        actions: <Widget>[
-          signOutButton(),
-        ],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-              center: Alignment(0, -1),
-              colors: [
-                Colors.white,
-                Colors.green[300],
-              ],
-              radius: 1.5),
-        ),
-        alignment: Alignment.topCenter,
-        child: ListView(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(
-                left: 10.0,
-                top: 15.0,
-                bottom: 15,
-              ),
-              child: Row(
-                children: <Widget>[
-                  showCuTemp(),
-                  showCuHumi(),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(
-                left: 10.0,
-                right: 10.0,
-                bottom: 5.0,
-              ),
-              width: 250.0,
-              child: Row(
-                children: <Widget>[
-                  showPanal('Mode', modeInt),
-                  mySizeBox(),
-                  showPanal('Fog', fogInt),
-                  mySizeBox(),
-                  showPanal('Fan', fanInt),
-                  mySizeBox(),
-                  showPanal('Light', lightInt),
-                ],
-              ),
-            ),
-            showThinkSpeak(url1),
-            mySizeBox(),
-            showThinkSpeak(url2),
-            mySizeBox(),
-            showThinkSpeak(url3),
-            mySizeBox(),
-            showThinkSpeak(url4)
+        appBar: AppBar(
+          title: Text('Show Environment'),
+          actions: <Widget>[
+            signOutButton(),
           ],
         ),
-      ),
-    );
+        body: Center(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                  center: Alignment(0, -1),
+                  colors: [
+                    Colors.white,
+                    Colors.green[300],
+                  ],
+                  radius: 1.5),
+            ),
+            alignment: Alignment.topCenter,
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(
+                    left: 10.0,
+                    top: 10,
+                    right: 10.0,
+                    bottom: 5.0,
+                  ),
+                  width: 250.0,
+                  child: Row(
+                    children: <Widget>[
+                      showPanal('Mode', modeInt),
+                      mySizeBox(),
+                      showPanal('Fog', fogInt),
+                      mySizeBox(),
+                      showPanal('Fan', fanInt),
+                      mySizeBox(),
+                      showPanal('Light', lightInt),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(
+                    left: 10.0,
+                    top: 5.0,
+                    bottom: 10,
+                  ),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      showThinkSpeak(temGageUrl),
+                      showThinkSpeak(humiGageUrl)
+                    ],
+                  ),
+                ),
+                showThinkSpeak(url1),
+                mySizeBox(),
+                showThinkSpeak(url2),
+                mySizeBox(),
+                showThinkSpeak(url3),
+                mySizeBox(),
+                showThinkSpeak(url4)
+              ],
+            ),
+          ),
+        ));
   }
 }

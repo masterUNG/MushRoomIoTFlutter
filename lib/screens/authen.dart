@@ -184,7 +184,7 @@ class _AuthenState extends State<Authen> {
   Widget showName() {
     return Container(
       child: Text(
-        'MushRoom Farm IoT',
+        'MushRoom IoT Farm',
         style: TextStyle(
             fontSize: 30.0,
             color: Colors.orange[500],
